@@ -10,5 +10,5 @@
 
 FROM almalinux:9
 COPY pom.xml .
-COPY src .
+COPY src /opt/server/src
 CMD ["sleep", "1000"]
