@@ -26,26 +26,42 @@
 # ENV CART_ENDPOINT="cart:8080" \
     # DB_HOST="mysql"
 # CMD ["java","-jar","shipping.jar"]
-
-
-FROM maven:3.9.4-eclipse-temurin-17
-
+# 
+# 
+# FROM maven:3.9.4-eclipse-temurin-17
+# 
+# WORKDIR /opt/server
+# 
+#Copy Maven project files
+# COPY pom.xml .
+# COPY src /opt/server/src
+# 
+#Build the JAR with embedded manifest
+# RUN mvn clean package
+# 
+#Rename for simplicity
+# RUN mv target/shipping-1.0.jar shipping.jar
+# 
+#Set environment variables
+# ENV CART_ENDPOINT="cart:8080" \
+    # DB_HOST="mysql"
+# 
+# EXPOSE 8080
+#Run the JAR
+# CMD ["java", "-jar", "shipping.jar"]
+# 
+FROM maven AS builder
 WORKDIR /opt/server
-
-# Copy Maven project files
 COPY pom.xml .
 COPY src /opt/server/src
-
-# Build the JAR with embedded manifest
 RUN mvn clean package
 
-# Rename for simplicity
-RUN mv target/shipping-1.0.jar shipping.jar
-
-# Set environment variables
+FROM eclipse-temurin:17-jre-alpine
+EXPOSE 8080
+WORKDIR /opt/server
+RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
 ENV CART_ENDPOINT="cart:8080" \
     DB_HOST="mysql"
-
-EXPOSE 8080
-# Run the JAR
-CMD ["java", "-jar", "shipping.jar"]
+COPY --from=builder /opt/server/target/shipping-*.jar /opt/server/shipping.jar
+USER roboshop
+CMD ["java","-jar","shipping.jar"]
