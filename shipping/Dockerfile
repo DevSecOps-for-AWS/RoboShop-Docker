@@ -46,5 +46,6 @@ RUN mv target/shipping-1.0.jar shipping.jar
 ENV CART_ENDPOINT="cart:8080" \
     DB_HOST="mysql"
 
+EXPOSE 8080
 # Run the JAR
 CMD ["java", "-jar", "shipping.jar"]
