@@ -15,6 +15,7 @@
 #CMD ["java","-jar","shipping.jar"]
 
  FROM maven
+ EXPOSE 8080
  WORKDIR /opt/server
  COPY pom.xml .
  COPY src /opt/server/src
