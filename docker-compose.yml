@@ -28,7 +28,7 @@ services:
     - catalogue
     - redis
   mysql:
-    image: devendermusukula/mysqlv1:v1
+    image: devendermusukula/mysql:v1
     container_name: mysql
   shipping:
     image: devendermusukula/shippingv1:v1
