@@ -28,10 +28,10 @@ services:
     - catalogue
     - redis
   mysql:
-    image: devendermusukula/mysql:v1
+    image: devendermusukula/mysqlv1:v1
     container_name: mysql
   shipping:
-    image: devendermusukula/shipping:v1
+    image: devendermusukula/shippingv1:v1
     container_name: shipping
     depends_on:
     - mysql
@@ -58,7 +58,7 @@ services:
     - cart
     - user
   frontend:
-    image: devendermusukula/frontend:v1
+    image: devendermusukula/frontendv1:v1
     container_name: frontend
     ports:
     - "80:80"
