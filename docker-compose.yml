@@ -31,7 +31,7 @@ services:
     image: devendermusukula/mysql:v1
     container_name: mysql
   shipping:
-    image: devendermusukula/shippingv1:v1
+    image: devendermusukula/shipping:v1
     container_name: shipping
     depends_on:
     - mysql
@@ -58,7 +58,7 @@ services:
     - cart
     - user
   frontend:
-    image: devendermusukula/frontendv1:v1
+    image: devendermusukula/frontend:v1
     container_name: frontend
     ports:
     - "80:80"
