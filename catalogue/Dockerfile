@@ -55,14 +55,18 @@
     # MONGO_URL="mongodb://mongodb:27017/catalogue"
 # WORKDIR /opt/server
 # USER roboshop
-#COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
+## COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #############
 # COPY --from=builder /opt/server /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
 # CMD ["node", "server.js"]
 # 
-##############################################################################################
-###############################################################################################
+############################################################################################################################
+## Above Fields but an caontainer image with 161MB size but inside conatiner /opt/server the files are owned by root:root 
+###########################################################################################################################
 
+#################################################################################################################################################################
+## Below Multi Stage Docker file gets the code compilation and environment setup done and ensures the application inside container is owned by roboshop user  ##
+#################################################################################################################################################################
 # Stage 1: Builder
 FROM node:20-alpine3.21 AS builder
 
@@ -90,6 +94,7 @@ RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
 # Switch to the non-root user
 USER ${USERNAME}
 
+########### Continue with your application build steps as the non-root user ######################
 #Stage 2: Runtime environment #
 
 FROM node:20-alpine3.21
@@ -97,9 +102,8 @@ RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
 WORKDIR /opt/server
-USER roboshop
-#COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
-#COPY --from=builder /opt/server /opt/server
+#USER roboshop
+#COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
 COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
 CMD ["node", "server.js"]
