@@ -39,3 +39,24 @@
 # above caused the image size increase from 231 Mb to 259 MB. So let's proceed with multistage build docker file#
 
 #### Multistage Build ##############
+
+# Stage 1: Build Environment #
+FROM  node:20-alpine3.21 AS builder
+WORKDIR /opt/server
+COPY package.json .
+COPY *.js .
+RUN npm install
+
+# Stage 2: Runtime environment #
+
+FROM node:20-alpine3.21
+RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
+RUN chown -R roboshop:roboshop /opt/server
+ENV MONGO="true" \
+    MONGO_URL="mongodb://mongodb:27017/catalogue"
+WORKDIR /opt/server
+USER roboshop
+# COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
+COPY --from=builder /opt/server /opt/server
+# Define runtime configuration (e.g., CMD, ENTRYPOINT) #
+CMD ["node", "server.js"]
