@@ -41,15 +41,56 @@
 #### Multistage Build ##############
 
 # Stage 1: Build Environment #
-FROM  node:20-alpine3.21 AS builder
-WORKDIR /opt/server
-RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
-RUN chown -R roboshop:roboshop /opt/server
-COPY package.json .
-COPY *.js .
-RUN npm install
+# FROM  node:20-alpine3.21 AS builder
+# WORKDIR /opt/server
+# COPY package.json .
+# COPY *.js .
+# RUN npm install
+# 
+#Stage 2: Runtime environment #
+# 
+# FROM node:20-alpine3.21
+# RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
+# ENV MONGO="true" \
+    # MONGO_URL="mongodb://mongodb:27017/catalogue"
+# WORKDIR /opt/server
+# USER roboshop
+#COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
+# COPY --from=builder /opt/server /opt/server
+# Define runtime configuration (e.g., CMD, ENTRYPOINT) #
+# CMD ["node", "server.js"]
+# 
+##############################################################################################
+###############################################################################################
 
-# Stage 2: Runtime environment #
+# Stage 1: Builder
+FROM node:20-alpine3.21 AS builder
+
+# Define environment variables for user and group
+ARG USERNAME=roboshop
+ARG GROUPNAME=roboshop
+ARG UID=1000
+ARG GID=1000
+
+# Create the group and user, then add the user to the group
+RUN addgroup -g ${GID} -S ${GROUPNAME} && \
+    adduser -u ${UID} -S ${USERNAME} -G ${GROUPNAME}
+
+# Set the working directory
+WORKDIR /opt/server
+
+# Copy application files (example)
+COPY package.json .
+COPY yarn.lock .
+
+# Install dependencies as the new user
+RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
+    npm install
+
+# Switch to the non-root user
+USER ${USERNAME}
+
+#Stage 2: Runtime environment #
 
 FROM node:20-alpine3.21
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
@@ -57,8 +98,7 @@ ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
 WORKDIR /opt/server
 USER roboshop
-# COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
+#COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
 COPY --from=builder /opt/server /opt/server
-#RUN chown -R roboshop:roboshop /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
 CMD ["node", "server.js"]
