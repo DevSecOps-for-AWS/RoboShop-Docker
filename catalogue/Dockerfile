@@ -69,8 +69,8 @@ FROM node:20-alpine3.21 AS builder
 # Define environment variables for user and group
 ARG USERNAME=roboshop
 ARG GROUPNAME=roboshop
-ARG UID=1000
-ARG GID=1000
+ARG UID=1001
+ARG GID=1001
 
 # Create the group and user, then add the user to the group
 RUN addgroup -g ${GID} -S ${GROUPNAME} && \
