@@ -57,5 +57,6 @@ WORKDIR /opt/server
 USER roboshop
 # COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
 COPY --from=builder /opt/server /opt/server
+RUN chown -R roboshop:roboshop /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
 CMD ["node", "server.js"]
