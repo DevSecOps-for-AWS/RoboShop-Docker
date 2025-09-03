@@ -44,6 +44,7 @@
 FROM  node:20-alpine3.21 AS builder
 WORKDIR /opt/server
 RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
+RUN chown -R roboshop:roboshop /opt/server
 USER roboshop
 COPY package.json .
 COPY *.js .
