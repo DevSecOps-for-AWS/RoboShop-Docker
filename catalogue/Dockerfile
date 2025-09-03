@@ -81,7 +81,7 @@ WORKDIR /opt/server
 
 # Copy application files (example)
 COPY package.json .
-COPY yarn.lock .
+COPY *.js .
 
 # Install dependencies as the new user
 RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
