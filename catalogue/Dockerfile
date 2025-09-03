@@ -102,8 +102,7 @@ RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
 WORKDIR /opt/server
-#USER roboshop
-USER ${USERNAME}
+USER roboshop
 #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
 COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
