@@ -79,9 +79,6 @@ RUN addgroup -g ${GID} -S ${GROUPNAME} && \
 # Set the working directory
 WORKDIR /opt/server
 
-# Set user
-USER ${USERNAME}
-
 # Copy application files (example)
 COPY package.json .
 COPY *.js .
@@ -102,6 +99,7 @@ ENV MONGO="true" \
 WORKDIR /opt/server
 USER roboshop
 #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage #
-COPY --from=builder /opt/server /opt/server
+#COPY --from=builder /opt/server /opt/server
+COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
 CMD ["node", "server.js"]
