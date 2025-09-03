@@ -36,7 +36,7 @@
 # USER roboshop
     # CMD ["node", "server.js"]
 
-# above caused the image size increase from 231 Mb to 259 MB. So let's proceed with multistage build docker file#
+##################### above caused the image size increase from 231 Mb to 259 MB. So let's proceed with multistage build docker file ################
 
 #### Multistage Build ##############
 
@@ -60,9 +60,9 @@
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
 # CMD ["node", "server.js"]
 # 
-############################################################################################################################
-## Above Fields but an caontainer image with 161MB size but inside conatiner /opt/server the files are owned by root:root 
-###########################################################################################################################
+#################################################################################################################################
+## Above Fields created a  container image with 161MB size but inside conatiner /opt/server the files are owned by root:root ####
+#################################################################################################################################
 
 #################################################################################################################################################################
 ## Below Multi Stage Docker file gets the code compilation and environment setup done and ensures the application inside container is owned by roboshop user  ##
@@ -95,20 +95,9 @@ RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
 USER ${USERNAME}
 
 ########## Continue with your application build steps as the non-root user ######################
-#Stage 2: Runtime environment #
-
-# FROM node:20-alpine3.21
-# ENV MONGO="true" \
-    # MONGO_URL="mongodb://mongodb:27017/catalogue"
-# WORKDIR /opt/server
-# USER roboshop
-# #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
-# COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
-##Define runtime configuration (e.g., CMD, ENTRYPOINT) #
-# CMD ["node", "server.js"]
-
 
 # Stage 2: Runtime environment
+
 FROM node:20-alpine3.21
 
 # Define environment variables again
@@ -120,17 +109,13 @@ ARG GID=1001
 # Create user and group in runtime stage
 RUN addgroup -g ${GID} -S ${GROUPNAME} && \
     adduser -u ${UID} -S ${USERNAME} -G ${GROUPNAME}
-
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
-
 WORKDIR /opt/server
 
 # Copy app files from builder stage #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
-
 COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
-
 # Switch to non-root user
 USER roboshop
-
+# Define runtime configuration (e.g., CMD, ENTRYPOINT) 
 CMD ["node", "server.js"]
