@@ -80,7 +80,7 @@ RUN addgroup -g ${GID} -S ${GROUPNAME} && \
 WORKDIR /opt/server
 
 # Set user
-USER roboshop
+USER ${USERNAME}
 
 # Copy application files (example)
 COPY package.json .
