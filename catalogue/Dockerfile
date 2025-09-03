@@ -94,15 +94,43 @@ RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
 # Switch to the non-root user
 USER ${USERNAME}
 
-########### Continue with your application build steps as the non-root user ######################
-#Stage 2: Runtime environment #
+########## Continue with your application build steps as the non-root user ######################
+Stage 2: Runtime environment #
+# 
+# FROM node:20-alpine3.21
+# ENV MONGO="true" \
+    # MONGO_URL="mongodb://mongodb:27017/catalogue"
+# WORKDIR /opt/server
+# USER roboshop
+# #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
+# COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
+##Define runtime configuration (e.g., CMD, ENTRYPOINT) #
+# CMD ["node", "server.js"]
 
+
+# Stage 2: Runtime environment
 FROM node:20-alpine3.21
+
+# Define environment variables again
+ARG USERNAME=roboshop
+ARG GROUPNAME=roboshop
+ARG UID=1001
+ARG GID=1001
+
+# Create user and group in runtime stage
+RUN addgroup -g ${GID} -S ${GROUPNAME} && \
+    adduser -u ${UID} -S ${USERNAME} -G ${GROUPNAME}
+
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
+
 WORKDIR /opt/server
-USER roboshop
-#COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
+
+# Copy app files from builder stage #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
+
 COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
-# Define runtime configuration (e.g., CMD, ENTRYPOINT) #
+
+# Switch to non-root user
+USER roboshop
+
 CMD ["node", "server.js"]
