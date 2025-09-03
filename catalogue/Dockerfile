@@ -103,14 +103,14 @@ USER ${USERNAME}
 FROM node:20-alpine3.21
 
 # Define environment variables again
-ARG USERNAME=roboshop
-ARG GROUPNAME=roboshop
-ARG UID=1001
-ARG GID=1001
+# ARG USERNAME=roboshop
+# ARG GROUPNAME=roboshop
+# ARG UID=1001
+# ARG GID=1001
 
 # Create user and group in runtime stage
-RUN addgroup -g ${GID} -S ${GROUPNAME} && \
-    adduser -u ${UID} -S ${USERNAME} -G ${GROUPNAME}
+# RUN addgroup -g ${GID} -S ${GROUPNAME} && \
+    # adduser -u ${UID} -S ${USERNAME} -G ${GROUPNAME}
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
 WORKDIR /opt/server
