@@ -35,3 +35,7 @@ ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
 USER roboshop
     CMD ["node", "server.js"]
+
+# above caused the image size increase from 231 Mb to 259 MB. So let's proceed with multistage build docker file#
+
+#### Multistage Build ##############
