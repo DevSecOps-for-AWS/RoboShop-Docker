@@ -92,7 +92,7 @@ RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
     npm install
 
 # Switch to the non-root user
-#USER ${USERNAME}
+USER ${USERNAME}
 
 ########### Continue with your application build steps as the non-root user ######################
 #Stage 2: Runtime environment #
