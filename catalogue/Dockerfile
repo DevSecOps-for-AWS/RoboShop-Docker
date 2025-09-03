@@ -92,7 +92,7 @@ RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
     npm install
 
 # Switch to the non-root user
-USER ${USERNAME}
+#USER ${USERNAME}
 
 ########### Continue with your application build steps as the non-root user ######################
 #Stage 2: Runtime environment #
@@ -102,7 +102,7 @@ RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
 ENV MONGO="true" \
     MONGO_URL="mongodb://mongodb:27017/catalogue"
 WORKDIR /opt/server
-#USER roboshop
+USER roboshop
 #COPY --from=build-stage /path/in/build/stage /path/to/place/in/final/stage # Also ensure ownership as appuser(roboshop):appgroup(roboshop)
 COPY --from=builder --chown=roboshop:roboshop /opt/server /opt/server
 # Define runtime configuration (e.g., CMD, ENTRYPOINT) #
