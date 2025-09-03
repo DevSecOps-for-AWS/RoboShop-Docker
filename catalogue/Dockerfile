@@ -84,8 +84,10 @@ RUN addgroup -g ${GID} -S ${GROUPNAME} && \
 WORKDIR /opt/server
 
 # Copy application files (example)
-COPY package.json .
-COPY *.js .
+# COPY package.json .
+# COPY *.js .
+COPY --chown=${USERNAME}:${GROUPNAME} package.json .
+COPY --chown=${USERNAME}:${GROUPNAME} *.js .
 
 # Install dependencies as the new user
 RUN chown -R ${USERNAME}:${GROUPNAME} /opt/server && \
